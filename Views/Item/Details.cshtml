@@ -1,0 +1,39 @@
+﻿@model ConsumeAPI.Models.ItemTodo
+@{
+    ViewData["title"] = "Details | Todo";
+}
+<div>
+    <h1>Task Details</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>S.N.</th>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th colspan="3">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>@Model.Id</td>
+                <td>@Model.Title</td>
+                <td>@Model.Description</td>
+                <td>
+                    <a asp-action="Update" asp-route-id="@Model.Id">
+                        Update
+                    </a>
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@Model.Id">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a asp-action="Read">
+        Go Back
+    </a>
+</div>
