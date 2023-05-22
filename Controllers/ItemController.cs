@@ -1,7 +1,7 @@
 ﻿using ConsumeAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Net.Http.Headers;
 
 namespace ConsumeAPI.Controllers
 {
@@ -19,13 +19,9 @@ namespace ConsumeAPI.Controllers
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseURL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpResponseMessage response = await client.PostAsJsonAsync(baseURL, newItem);
 
-                HttpResponseMessage getData = await client.PostAsJsonAsync("", newItem);
-
-                if (getData.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction("Read", "Item");
                 }
@@ -44,14 +40,10 @@ namespace ConsumeAPI.Controllers
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseURL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                HttpResponseMessage getData = await client.GetAsync("");
-                if (getData.IsSuccessStatusCode)
+                HttpResponseMessage response = await client.GetAsync(baseURL);
+                if (response.IsSuccessStatusCode)
                 {
-                    string dataResult = getData.Content.ReadAsStringAsync().Result;
+                    string dataResult = response.Content.ReadAsStringAsync().Result;
                     todoList = JsonConvert.DeserializeObject<IList<ItemTodo>>(dataResult);
                 }
                 else
@@ -69,11 +61,7 @@ namespace ConsumeAPI.Controllers
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseURL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                HttpResponseMessage getData = await client.GetAsync($"get?id={id}");
+                HttpResponseMessage getData = await client.GetAsync(baseURL+$"get?id={id}");
                 if (getData.IsSuccessStatusCode)
                 {
                     string dataResult = getData.Content.ReadAsStringAsync().Result;
@@ -94,15 +82,11 @@ namespace ConsumeAPI.Controllers
             UpdateItemTodo updateItem = new();
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseURL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpResponseMessage response = await client.GetAsync(baseURL+$"get?id={id}");
 
-                HttpResponseMessage getData = await client.GetAsync($"get?id={id}");
-
-                if (getData.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
-                    string dataResult = getData.Content.ReadAsStringAsync().Result;
+                    string dataResult = response.Content.ReadAsStringAsync().Result;
                     var item = JsonConvert.DeserializeObject<ItemTodo>(dataResult);
                     updateItem = new UpdateItemTodo()
                     {
@@ -122,13 +106,9 @@ namespace ConsumeAPI.Controllers
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseURL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpResponseMessage response = await client.PutAsJsonAsync(baseURL+$"put?id={updateItem.Id}", updateItem);
 
-                HttpResponseMessage getData = await client.PutAsJsonAsync($"put?id={updateItem.Id}", updateItem);
-
-                if (getData.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction("Read", "Item");
                 }
@@ -145,11 +125,7 @@ namespace ConsumeAPI.Controllers
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseURL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                HttpResponseMessage getData = await client.DeleteAsync($"delete?id={id}");
+                HttpResponseMessage getData = await client.DeleteAsync(baseURL + $"delete?id={id}");
                 if (getData.IsSuccessStatusCode)
                 {
                     return RedirectToAction("Read", "Item");
